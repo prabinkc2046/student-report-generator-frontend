@@ -11,7 +11,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Loader2, AlertCircle, X } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Loader2, AlertCircle, X, Sparkles, User, BookOpen, Target, FileText } from 'lucide-react';
 
 // Attribute categories (same as your original)
 const attributeCategories = {
@@ -216,7 +217,7 @@ export default function Home() {
         setError(data.error);
       }
     } catch (err) {
-      setError('Network Error: Could not connect to backend server. Make sure the Flask server is running on port 5001.');
+      setError('Network Error: Could not connect to backend server.');
     } finally {
       setIsLoading(false);
     }
@@ -238,7 +239,6 @@ export default function Home() {
     allAttributes.push(...customItems);
   }
 
-  // Fixed: Handle both string and null values
   const handleGenderChange = (value: string | null) => {
     if (value) {
       setGender(value);
@@ -246,132 +246,159 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 to-indigo-700 p-4">
-      <div className="max-w-[1600px] mx-auto">
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto py-8 px-4 max-w-7xl">
         {/* Header */}
-        <div className="text-center text-white mb-8">
-          <h1 className="text-4xl font-bold mb-2">📝 Student Report Generator</h1>
-          <p className="text-lg opacity-90">Professional Primary School Teacher Reports - Exactly 850 Characters</p>
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-4">
+            <Sparkles className="h-8 w-8 text-primary" />
+          </div>
+          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            Student Report Generator
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            Create professional primary school reports in seconds
+          </p>
         </div>
 
-        {/* Warning Banner */}
-        <Alert className="mb-6 bg-yellow-100 border-yellow-400 text-yellow-800">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            ⚠️ Reports use ONLY the characteristics you select. No additional qualities or ideas will be added.
-          </AlertDescription>
-        </Alert>
+        <div className="grid lg:grid-cols-2 gap-6">
+          {/* Left Column - Input Form */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <User className="h-5 w-5 text-primary" />
+                  Student Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Student Name</label>
+                    <Input
+                      placeholder="Enter full name"
+                      value={studentName}
+                      onChange={(e) => setStudentName(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Gender</label>
+                    <Select value={gender} onValueChange={handleGenderChange}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="female">Female</SelectItem>
+                        <SelectItem value="male">Male</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-        {/* Main Card */}
-        <Card className="shadow-2xl">
-          {/* Input Section */}
-          <CardContent className="p-6">
-            {/* Basic Info */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div>
-                <label className="block text-sm font-medium mb-2">👤 Student Name</label>
-                <Input
-                  placeholder="Enter student's full name"
-                  value={studentName}
-                  onChange={(e) => setStudentName(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">⚥ Gender</label>
-                <Select value={gender} onValueChange={handleGenderChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select gender" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="female">Female</SelectItem>
-                    <SelectItem value="male">Male</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Attributes Selection */}
-            <div className="mb-8">
-              <label className="block text-sm font-medium mb-3">📋 Select Student Characteristics</label>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {Object.entries(attributeCategories).map(([category, attributes]) => (
-                  <Card key={category} className="border-2 hover:border-purple-500 transition-all">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-lg text-purple-600">{category}</CardTitle>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full mt-2"
-                        onClick={() => selectAllInCategory(attributes)}
-                      >
-                        Select All
-                      </Button>
-                    </CardHeader>
-                    <CardContent>
-                      <ScrollArea className="h-64">
-                        <div className="space-y-2">
-                          {attributes.map((attr) => (
-                            <div key={attr} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-lg">
-                              <Checkbox
-                                id={attr}
-                                checked={selectedAttributes.includes(attr)}
-                                onCheckedChange={() => toggleAttribute(attr)}
-                              />
-                              <label
-                                htmlFor={attr}
-                                className="text-sm cursor-pointer flex-1"
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BookOpen className="h-5 w-5 text-primary" />
+                  Student Characteristics
+                </CardTitle>
+                <CardDescription>
+                  Select the characteristics that describe the student
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Tabs defaultValue="Reading Skills" className="w-full">
+                  <ScrollArea className="h-[400px] pr-4">
+                    <div className="space-y-6">
+                      {Object.entries(attributeCategories).map(([category, attributes]) => (
+                        <div key={category} className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <h3 className="font-semibold text-sm text-primary">{category}</h3>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => selectAllInCategory(attributes)}
+                              className="h-7 text-xs"
+                            >
+                              Select All
+                            </Button>
+                          </div>
+                          <div className="grid grid-cols-1 gap-2">
+                            {attributes.map((attr) => (
+                              <div
+                                key={attr}
+                                className="flex items-center space-x-2 p-2 rounded-lg hover:bg-accent transition-colors cursor-pointer"
+                                onClick={() => toggleAttribute(attr)}
                               >
-                                {attr}
-                              </label>
-                            </div>
-                          ))}
+                                <Checkbox
+                                  checked={selectedAttributes.includes(attr)}
+                                  onCheckedChange={() => toggleAttribute(attr)}
+                                />
+                                <label className="text-sm cursor-pointer flex-1">
+                                  {attr}
+                                </label>
+                              </div>
+                            ))}
+                          </div>
+                          <Separator />
                         </div>
-                      </ScrollArea>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </Tabs>
 
-            {/* Custom Attributes */}
-            <div className="mb-6 p-4 bg-blue-50 rounded-lg border-l-4 border-purple-600">
-              <h4 className="font-semibold mb-2 flex items-center gap-2">
-                <span>✏️</span> Custom Characteristics (Optional)
-              </h4>
-              <Textarea
-                placeholder="Enter additional characteristics, separated by commas (e.g., loves singing, good at sports, plays musical instrument)"
-                value={customAttributes}
-                onChange={(e) => setCustomAttributes(e.target.value)}
-                className="min-h-[80px]"
-              />
-            </div>
+                <div className="mt-6">
+                  <label className="text-sm font-medium mb-2 block">Custom Characteristics</label>
+                  <Textarea
+                    placeholder="Add custom characteristics separated by commas..."
+                    value={customAttributes}
+                    onChange={(e) => setCustomAttributes(e.target.value)}
+                    rows={3}
+                  />
+                </div>
+              </CardContent>
+            </Card>
 
-            {/* Selected Attributes Display */}
-            <div className="mb-6 p-4 bg-blue-50 rounded-lg border-l-4 border-purple-600">
-              <h4 className="font-semibold mb-3">📌 Selected Characteristics (Report will use ONLY these):</h4>
-              <div className="flex flex-wrap gap-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5 text-primary" />
+                  Selected Characteristics
+                </CardTitle>
+                <CardDescription>
+                  {allAttributes.length} characteristic(s) selected
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
                 {allAttributes.length === 0 ? (
-                  <span className="text-gray-500">None selected</span>
+                  <p className="text-muted-foreground text-sm text-center py-4">
+                    No characteristics selected
+                  </p>
                 ) : (
-                  allAttributes.map((attr) => (
-                    <Badge key={attr} variant="secondary" className="text-sm py-1 px-3">
-                      {attr}
-                      <X
-                        className="ml-2 h-3 w-3 cursor-pointer hover:text-red-500"
-                        onClick={() => removeAttribute(attr)}
-                      />
-                    </Badge>
-                  ))
+                  <div className="flex flex-wrap gap-2">
+                    {allAttributes.map((attr) => (
+                      <Badge key={attr} variant="secondary" className="text-xs">
+                        {attr}
+                        <button
+                          onClick={() => removeAttribute(attr)}
+                          className="ml-1 hover:text-destructive"
+                        >
+                          ×
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
                 )}
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
-            {/* Action Buttons */}
-            <div className="flex gap-4">
+            <div className="flex gap-3">
               <Button
                 onClick={generateReport}
-                disabled={isLoading}
-                className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+                disabled={isLoading || allAttributes.length === 0}
+                className="flex-1"
+                size="lg"
               >
                 {isLoading ? (
                   <>
@@ -379,48 +406,84 @@ export default function Home() {
                     Generating...
                   </>
                 ) : (
-                  '✨ Generate Professional Report'
+                  <>
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Generate Report
+                  </>
                 )}
               </Button>
-              <Button onClick={clearForm} variant="outline" className="flex-1">
-                🗑️ Clear All
+              <Button onClick={clearForm} variant="outline" size="lg">
+                Clear All
               </Button>
             </div>
-          </CardContent>
+          </div>
 
-          {/* Output Section */}
-          <Separator />
-          <CardContent className="p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">📄 Generated Report</h2>
-              <Badge className={`text-sm ${charCount === 850 ? 'bg-green-500' : 'bg-yellow-500'}`}>
-                Characters: {charCount}/850
-              </Badge>
-            </div>
+          {/* Right Column - Output */}
+          <div className="space-y-6">
+            <Card className="sticky top-8">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-primary" />
+                  Generated Report
+                </CardTitle>
+                <CardDescription>
+                  Professional end-of-term report
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {error && (
+                  <Alert variant="destructive" className="mb-4">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
 
-            {error && (
-              <Alert variant="destructive" className="mb-4">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            <div className="bg-gray-50 p-6 rounded-lg border-l-4 border-purple-600 min-h-[200px] whitespace-pre-wrap">
-              {isLoading ? (
-                <div className="text-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-                  <p>Generating professional report... This may take a few moments.</p>
+                <div className="bg-muted/30 rounded-lg p-6 min-h-[400px]">
+                  {isLoading ? (
+                    <div className="flex flex-col items-center justify-center h-full min-h-[300px]">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+                      <p className="text-muted-foreground text-sm">
+                        Generating your report...
+                      </p>
+                    </div>
+                  ) : report ? (
+                    <>
+                      <div className="mb-4 flex justify-between items-center">
+                        <Badge variant="outline" className="text-xs">
+                          Student: {studentName}
+                        </Badge>
+                        <Badge 
+                          className={`text-xs ${
+                            charCount === 850 
+                              ? 'bg-green-500/10 text-green-700 dark:text-green-400 border-green-200' 
+                              : 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-200'
+                          }`}
+                          variant="outline"
+                        >
+                          {charCount} / 850 characters
+                        </Badge>
+                      </div>
+                      <div className="prose prose-sm max-w-none">
+                        {report.split('\n').map((paragraph, idx) => (
+                          <p key={idx} className="mb-3 text-foreground">
+                            {paragraph}
+                          </p>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center">
+                      <FileText className="h-12 w-12 text-muted-foreground/30 mb-4" />
+                      <p className="text-muted-foreground text-sm">
+                        Select student characteristics and click "Generate Report" to create a professional report.
+                      </p>
+                    </div>
+                  )}
                 </div>
-              ) : report ? (
-                report
-              ) : (
-                <em className="text-gray-500">
-                  Select student characteristics and click "Generate Professional Report" to create a teacher report.
-                </em>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
