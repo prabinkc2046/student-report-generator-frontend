@@ -1,18 +1,15 @@
-// components/navbar.tsx
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FileText, Home, Settings, BookOpen, Sparkles, Upload, Users } from 'lucide-react';
+import { FileText, Home, Settings, BookOpen, Sparkles, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from './theme-toggle';
 
 const navItems = [
-  { name: 'Generate Report', href: '/', icon: Home },
-  { name: 'Bulk Report', href: '/bulk-report', icon: Users },
+  { name: 'Generate Report', href: '/generate-report', icon: Home },
   { name: 'Saved Reports', href: '/saved-reports', icon: FileText },
-  { name: 'Upload Students', href: '/students/upload', icon: Upload },
-  { name: 'Parse PDF', href: '/parse-pdf', icon: FileText },
+  { name: 'Templates', href: '/templates', icon: BookOpen },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
@@ -43,10 +40,11 @@ export function Navbar() {
                   <Button
                     variant={isActive ? 'default' : 'ghost'}
                     size="sm"
-                    className={`gap-2 ${isActive
-                        ? 'bg-primary text-primary-foreground'
+                    className={`gap-2 ${
+                      isActive 
+                        ? 'bg-primary text-primary-foreground' 
                         : 'hover:bg-accent'
-                      }`}
+                    }`}
                   >
                     <Icon className="h-4 w-4" />
                     {item.name}
@@ -59,8 +57,8 @@ export function Navbar() {
           {/* Right side actions */}
           <div className="flex items-center gap-2">
             <ThemeToggle />
-
-            {/* Mobile menu button */}
+            
+            {/* Mobile menu button (optional - you can add mobile menu later) */}
             <Button variant="ghost" size="icon" className="md:hidden">
               <span className="sr-only">Open menu</span>
               <svg

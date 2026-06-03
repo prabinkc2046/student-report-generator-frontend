@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// prisma/schema.prisma
+// prisma/schema.prisma
+
+model Student {
+  id              String   @id @default(cuid())
+  name            String
+  pronoun         String
+  characteristics String?
+  hasSavedReport  Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  reports         Report[]
+
+  history ReportHistory[]
+}
+
+model Report {
+  id         String   @id @default(cuid())
+  studentId  String
+  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  report     String   @db.Text
+  attributes String
+  charCount  Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([studentId])
+  @@map("reports")
+}
+
+model Attribute {
+  id        String   @id @default(cuid())
+  category  String
+  name      String
+  isEnabled Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([category, name])
+  @@map("attributes")
+}
+
+model PublishedReport {
+  id             String   @id @default(cuid())
+  studentId      String
+  studentName    String
+  studentPronoun String
+  report         String   @db.Text
+  attributes     String
+  charCount      Int
+  publishedBy    String? // User who published it
+  publishedAt    DateTime @default(now())
+  status         String   @default("published") // published, archived, etc.
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([status])
+  @@map("published_reports")
+}
+
+model ReportHistory {
+  id        String   @id @default(cuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  report    String   @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([studentId, createdAt])
+}
+
+// Add to your schema.prisma
+
+model BulkJob {
+  id             String   @id @default(cuid())
+  totalStudents  Int
+  completedCount Int      @default(0)
+  failedCount    Int      @default(0)
+  status         String   @default("pending") // pending, processing, completed, failed
+  students       Json // Store student data as JSON
+  results        Json? // Store results as JSON
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("bulk_jobs")
+}
