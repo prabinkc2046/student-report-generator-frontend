@@ -1,0 +1,27 @@
+#!/bin/bash
+
+brew services run ollama
+brew services run postgresql
+
+# Start backend
+cd /Users/pkc/student-report-generator-backend
+pipenv run python app.py > /dev/null 2>&1 &
+
+# Start frontend
+cd /Users/pkc/student-report-generator-frontend
+
+# Open browser
+open http://localhost:3000
+
+# Run frontend (blocks)
+pnpm run build && pnpm run start
+
+
+To stop:
+#!/bin/bash
+
+brew services stop ollama
+brew services stop postgresql
+
+# Show confirmation dialog with icon
+osascript -e 'display dialog "Services stopped. Everything is cleaned up!" buttons {"OK"} default button 1 '
